@@ -1,176 +1,134 @@
-# Telegram MCP Server
+# 🚀 Telegram MCP Server
 
-Telegram MCP server scaffold that logs in to Telegram using a QR code before starting the MCP server.
+Give your AI Assistant (Claude, Cursor, etc.) full control over your Telegram:
+- 🔍 **Search** chats and messages
+- 💬 **Send & Reply** to conversations
+- 📄 **Read PDFs and files** sent in chats
+- ⚡ **Zero-friction login** using a terminal QR code
 
-This project uses:
+---
 
-- `telethon` to connect to Telegram
-- `qrcode` to print a login QR code in the terminal
-- `python-dotenv` to load private keys from a local `.env` file
+## ⚡ Quick Start (5 Minutes Setup)
 
-> مهم: لا ترفع مفاتيح Telegram الخاصة بك أو ملف `.session` إلى GitHub.
+Follow these simple steps to get started:
 
-## Requirements
-
-- Python 3.10+
-- Telegram account
-- Telegram API credentials from <https://my.telegram.org>
-
-## 1. Get Telegram API ID and API Hash
-
-1. Open <https://my.telegram.org>
-2. Login with your Telegram phone number
-3. Go to **API development tools**
-4. Create an app
-5. Copy:
+### 1️⃣ Get Your Telegram API Keys
+1. Go to [my.telegram.org](https://my.telegram.org) and log in with your phone number.
+2. Click on **API development tools**.
+3. Create a new app (you can name it anything, e.g., `Telegram MCP`).
+4. Copy these two values:
    - `api_id`
    - `api_hash`
 
-## 2. Install dependencies
+---
 
-Create and activate a virtual environment:
+### 2️⃣ Clone & Setup the Environment
+
+Open your terminal and run:
 
 ```bash
+# Clone the repository
+git clone [https://github.com/Hussain-Dev2/Telegram-mcp.git](https://github.com/Hussain-Dev2/Telegram-mcp.git)
+cd Telegram-mcp
+
+# Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+
+# Install required packages
+pip install -r requirements.txt
 ```
 
-Install packages:
+---
 
-```bash
-pip install telethon qrcode python-dotenv
-```
+### 3️⃣ Configure Your Keys
 
-## 3. Configure environment variables
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
 
-Copy the example file:
+2. Open the `.env` file and paste your credentials:
+   ```env
+   TELEGRAM_API_ID=12345678
+   TELEGRAM_API_HASH=your_api_hash_here
+   TELEGRAM_SESSION=telegram_mcp
+   ```
 
-```bash
-cp .env.example .env
-```
+---
 
-Edit `.env`:
+### 4️⃣ First-Time Login (Scan QR Code)
 
-```env
-TELEGRAM_API_ID=123456
-TELEGRAM_API_HASH=your_api_hash_here
-TELEGRAM_SESSION=telegram_mcp
-```
-
-Replace the values with your real Telegram credentials.
-
-## 4. How QR login works
-
-When the server starts, it checks if your Telegram session is already authorized.
-
-- If authorized, it continues normally.
-- If not authorized, it prints a QR code in the terminal.
-
-To login:
-
-1. Open Telegram on your phone
-2. Go to **Settings**
-3. Go to **Devices**
-4. Tap **Link Desktop Device**
-5. Scan the QR code from the terminal
-
-After scanning, a `.session` file is created locally. This file keeps you logged in.
-
-## 5. Run
-
-Current `server.py` contains the login helper and Telegram client setup.
-
-If your MCP server has a main function, call this before starting MCP:
-
-```python
-await before_mcp_start()
-```
-
-Example:
-
-```python
-async def main():
-    await before_mcp_start()
-    await mcp.run_async()
-```
-
-Then run:
+Run the server once in your terminal to link your Telegram:
 
 ```bash
 python server.py
 ```
 
-## Project files
+- A **QR code** will appear directly in your terminal.
+- Open Telegram on your phone:
+  `Settings` ➔ `Devices` ➔ `Link Desktop Device`.
+- Scan the code on your screen.
+- Done! A session file (`telegram_mcp.session`) is created. You will never need to log in again.
 
-```text
-server.py       # Telegram client and QR login helper
-.env.example   # Example environment variables
-.gitignore     # Prevents secrets/session files from being committed
-README.md      # Documentation
+---
+
+## 🤖 Connect to AI (Claude Desktop / Cursor)
+
+Add this server to your MCP configuration file:
+
+### For Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "telegram": {
+      "command": "/absolute/path/to/Telegram-mcp/.venv/bin/python",
+      "args": ["/absolute/path/to/Telegram-mcp/server.py"]
+    }
+  }
+}
 ```
 
-## Security notes
+*(Replace `/absolute/path/to/...` with your actual full folder path)*
 
-Do not commit or share these files:
+---
 
-- `.env`
-- `*.session`
-- `*.session-journal`
+## 🛠 Available Tools for AI
 
-These files are ignored by `.gitignore`.
+Once connected, your AI assistant can run:
+- `get_chats`: Shows recent dialogs and user/group IDs.
+- `search_messages`: Finds messages across all chats.
+- `send_message`: Sends messages to any contact or channel.
+- `read_pdf_file`: Reads and summarizes attached PDF documents.
 
-If you accidentally publish your API hash or session file, revoke/regenerate credentials from Telegram and delete the leaked session.
+---
 
-## Troubleshooting
+## ⚠️ Security Rules
 
-### `Please set TELEGRAM_API_ID and TELEGRAM_API_HASH`
+- **NEVER** upload or share your `.env` or `*.session` files.
+- These contain your account login session and are already ignored by `.gitignore`.
 
-Make sure `.env` exists and contains valid values:
+---
 
-```env
-TELEGRAM_API_ID=your_id
-TELEGRAM_API_HASH=your_hash
-```
+##  دليل التشغيل السريع بالعربية
 
-### QR code does not appear correctly
+1. **حمّل المشروع وثبت المكتبات:**
+   ```bash
+   git clone [https://github.com/Hussain-Dev2/Telegram-mcp.git](https://github.com/Hussain-Dev2/Telegram-mcp.git)
+   cd Telegram-mcp
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
-Make sure your terminal supports ASCII output and is wide enough. Try zooming out or using a larger terminal window.
+2. **اضبط مفاتيحك:**
+   - انسخ ملف `.env.example` إلى `.env`.
+   - ضع مفاتيح `API_ID` و `API_HASH` من موقع [my.telegram.org](https://my.telegram.org).
 
-### Login asks again every time
+3. **تسجيل الدخول:**
+   - شغّل السكربت: `python server.py`.
+   - امسح رمز الـ QR من تطبيق تيليجرام على هاتفك (`الإعدادات > الأجهزة > ربط جهاز جديد`).
 
-Make sure the `.session` file is not being deleted. The session name comes from:
-
-```env
-TELEGRAM_SESSION=telegram_mcp
-```
-
-This creates a local file like:
-
-```text
-telegram_mcp.session
-```
-
-## Arabic quick start
-
-1. ثبت المكتبات:
-
-```bash
-pip install telethon qrcode python-dotenv
-```
-
-2. انسخ ملف البيئة:
-
-```bash
-cp .env.example .env
-```
-
-3. ضع مفاتيحك داخل `.env`.
-
-4. شغل السكربت:
-
-```bash
-python server.py
-```
-
-5. امسح QR من تطبيق تيليجرام.
-# Telegram-mcp
+4. **الربط:**
+   - أضف مسار بايثون للبيئة الافتراضية ومسار `server.py` داخل إعدادات MCP في برنامجك المفضل.
