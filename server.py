@@ -1,9 +1,13 @@
+import asyncio
+import getpass
 import os
 import sys
+from pathlib import Path
 
 import qrcode
 from dotenv import load_dotenv
 from telethon import TelegramClient
+from telethon.errors import SessionPasswordNeededError
 
 try:
     import arabic_reshaper
@@ -12,11 +16,14 @@ except ImportError:  # Optional terminal-only display helpers.
     arabic_reshaper = None
     get_display = None
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 
 API_ID = int(os.getenv("TELEGRAM_API_ID", "0"))
 API_HASH = os.getenv("TELEGRAM_API_HASH", "")
 SESSION_NAME = os.getenv("TELEGRAM_SESSION", "telegram_mcp")
+if not os.path.isabs(SESSION_NAME):
+    SESSION_NAME = str(BASE_DIR / SESSION_NAME)
 
 
 if not API_ID or not API_HASH:
@@ -59,7 +66,12 @@ async def login_with_qr(client: TelegramClient):
     qr.add_data(qr_login.url)
     qr.print_ascii(invert=True)
 
-    await qr_login.wait()
+    try:
+        await qr_login.wait()
+    except SessionPasswordNeededError:
+        password = getpass.getpass("Two-step verification password: ")
+        await client.sign_in(password=password)
+
     print_arabic("تم تسجيل الدخول بنجاح!")
     print()
 
@@ -69,7 +81,11 @@ async def before_mcp_start():
     await login_with_qr(client)
 
 
-# Example usage when you add/run your MCP server:
-# async def main():
-#     await before_mcp_start()
-#     await mcp.run_async()
+async def main():
+    """Run login flow when executing `python server.py` directly."""
+    await before_mcp_start()
+    await client.disconnect()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
